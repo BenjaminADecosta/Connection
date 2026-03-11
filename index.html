@@ -7,6 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Growing Together" />
   <meta name="theme-color" content="#E8D9B8" />
+  <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAFfUlEQVR4nO3cMU4cSxRG4WJEBhkRrAEiCAgRrAE2YOmlrIUXWnobMGsA2ZmfBBGsASIyiHHiRsMw3dNddatuzV/ni2wsd4PncKmpankjONo/PXz3vD/yeby93/C4b7GbEi9KRJ71BkSMPrniznJRQsZY1mGbXoyQEcsqbJOLEDKspIY9S/0EiBmWUntKCpqYkUNKV1HjnZBRytQlyOQJTcwoaWpvk4ImZniY0t3ooIkZnsb2NypoYkYNxnS4MmhiRk1W9Zi8Dw3UZDBopjNqNNRl7x6fRcwPN3d7qdeApoOzo6fUayzbo14adGrMXcgWnzQ0WTWyGPVmysWWebi52yNkrNI1Yt3LlzV0ynQmZkx1cHb0lLI0XezVbJeDmBErNep5n4KOnc7EjFQpUc93yz40pHwEzXSGN4spzYSGFIKGlFkIHHFDw/7p4TsTGlIIGlIIGlIIGlJmvCGEEiY0pBA0pJg/D42v/vtn97n79bfvz7uen4s6JnRm8zEv+z1sEXRGffESdT4EDSkEDSkEDSkEDSkEDSkEDSkEDSkEDSnNH317HXLkvG/Lx+tNT2jVEzvVr2uMZoNWf9HVv74+zQYNTQQNKc0Grf7GSf3r69Ns0CHovuiqX9cYzW/b5Xzxh96YtRxdTk1PaOghaEghaEghaEghaEghaEghaEghaEghaEghaEghaEghaEghaEghaEghaEghaEghaEghaEghaEghaEghaEghaEghaEghaEgxC3prZ/vS6lpALCY0pJgE3U1npjS8MaEhhaAhxTxolh3wxISGlKSg+6YxUxpemNCQQtCQEh30qmUFyw54YEJDCkGjClY/0aOCHntzlh0ojQkNd5bPAhE0pEwOeup3EcsOlMSEhivrgTcp6NibM6VRChMaUggabnI83DY66NRlA8sOlMCEhhSChotcD7eNCtpqucCyA7kxoSFlZdDWU5UpjZwPtzGhIYWgIWUw6FzLA5Yd7cr9cBsTGlI2+/5ga2f78u3l9WrZx6feZNl1gBx42g7FlOhnadD897hYVzycBCm8KUQRpQbil6AX/+LWzvYlz3JgXTChIaV40Ezp9uT4Cd93zU9BExvWXe/BSk59hzbQNP9aWxzMzW8rL/4Za2hI+Qi69HKD5U173E4KgVot21ae/71r0EzpdhQ9WCEsqHBfcvDNpC/3SfP8x92DBizNapiQNXwOyKP0a1v0YIXDFORWdMnBJG5Lyde7uxdraEjhaTtk4fU6zzzWtUSNHLZ2ti9ZcsCc58By27ZjSiMHl+ehOzwXrcnqPyiKwZIDUtyDZumhr9Rr/PbyeuUedAhEDRvscmT27fvz7pSPKyo9rKoJWnVKL8ZLzHm57nIsUt31aClib9VMaGhxO/r2uOkQ1aVHS1xPCr1uPISoEavKoLG+vIdRtUF7/8NgPSXtcvzdkbju+TgaU8MQSprQNXwBqEMtLVS75ABiEDSS1TKdQ6jspBDrKeU907JvhreX16vYbxImNKQQNKqTsoQhaEghaEghaEjZ/P/6178hhLB/evgeQv+7zoFrfDkpBLwwoSGFfWhUZ2hFMLSCeLy93/iY0I+39xsxNz++ODn//eMnyw4k+/3j5/Xxxcl5zN/t+mXJASmfgmZKw4vFdA7BcEITNWKlxLzIdMlB1JjKMuYQMuxyHF+cnD/c3O2FEMLB2dGT9fWhoWvEMuYQMm3bdSF3nzSwqGvE+lnqrPvQTGiUxrYdpBA0pBA0pIw+SOmexgO8jDn4Gz2hY08RAQtj+5u05CBqeJjS3eQ1NFGjpKm9JcXJuhq5xA7OpF0OpjVySOkqeduOqGEptSfTGFmCIJbVYMwyXQkbY1n/hM+6XCBs9Mm1VC22/iVulHi/9QeJjqpyFOc+oAAAAABJRU5ErkJggg==" />
   <title>Growing Together</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:ital,wght@0,400;1,400;1,600&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
@@ -44,6 +45,23 @@
       position: fixed; inset: 0;
       background: radial-gradient(ellipse at center, transparent 45%, rgba(80,40,10,0.14) 100%);
       pointer-events: none; z-index: 0;
+    }
+
+    #trees {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+      overflow: hidden;
+    }
+    #palm-left {
+      position: fixed; bottom: -20px; left: -40px;
+      height: 75vh; max-height: 560px;
+      opacity: 0.5; pointer-events: none; z-index: 0;
+    }
+    #palm-right {
+      position: fixed; bottom: -20px; right: -40px;
+      height: 68vh; max-height: 500px;
+      opacity: 0.45; pointer-events: none; z-index: 0;
+      transform: scaleX(-1);
     }
 
     #app {
@@ -258,6 +276,10 @@
   </style>
 </head>
 <body>
+<div id="trees">
+  <img id="palm-left" src="https://pngimg.com/uploads/palm_tree/palm_tree_PNG2485.png" alt="" />
+  <img id="palm-right" src="https://pngimg.com/uploads/palm_tree/palm_tree_PNG2485.png" alt="" />
+</div>
 <div id="app">
 
   <div id="header">
