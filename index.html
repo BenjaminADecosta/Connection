@@ -4,240 +4,319 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Connection Wheel" />
-  <meta name="theme-color" content="#06080f" />
-  <title>The Connection Wheel</title>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Growing Together" />
+  <meta name="theme-color" content="#E8D9B8" />
+  <title>Growing Together</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:ital,wght@0,400;1,400;1,600&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
+    :root {
+      --parchment: #EDE0C4;
+      --card-bg: #F8F0DC;
+      --card-back: #2C4233;
+      --card-back-2: #243829;
+      --card-back-3: #1C2E21;
+      --ink: #1E1208;
+      --ink-mid: #5C3D20;
+      --ink-light: #8B6040;
+      --ink-faint: #B09878;
+      --gold: #B8943F;
+      --border: rgba(30,18,8,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body { min-height: 100%; }
+
+    body {
       min-height: 100vh;
-      background: radial-gradient(ellipse at 50% 0%, #111828 0%, #06080f 60%);
-      font-family: 'Georgia', 'Times New Roman', serif;
-      color: #F5EDD8;
+      background-color: var(--parchment);
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(120,80,20,0.022) 3px, rgba(120,80,20,0.022) 4px),
+        repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(120,80,20,0.012) 3px, rgba(120,80,20,0.012) 4px);
+      font-family: 'Raleway', sans-serif;
+      color: var(--ink);
       overflow-x: hidden;
     }
-    #dot-grid {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background-image: radial-gradient(circle, #C9A84C 1px, transparent 1px);
-      background-size: 32px 32px;
-      opacity: 0.018;
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 45%, rgba(80,40,10,0.14) 100%);
+      pointer-events: none; z-index: 0;
     }
-    #lights-canvas {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    }
+
     #app {
       position: relative; z-index: 1;
+      max-width: 420px; margin: 0 auto;
+      padding: 52px 28px 72px;
       display: flex; flex-direction: column; align-items: center;
-      padding: 36px 16px 52px;
-      max-width: 520px; margin: 0 auto;
     }
 
     /* Header */
-    #header { text-align: center; margin-bottom: 28px; max-width: 460px; width: 100%; }
-    #eyebrow {
-      font-size: 10px; letter-spacing: 0.42em; text-transform: uppercase;
-      color: #C9A84C; margin-bottom: 10px; opacity: 0.9;
+    #header { text-align: center; width: 100%; margin-bottom: 36px; }
+
+    .eyebrow {
+      font-weight: 300; font-size: 9px;
+      letter-spacing: 0.55em; text-transform: uppercase;
+      color: var(--ink-faint); margin-bottom: 12px;
     }
+
     h1 {
-      font-size: clamp(22px, 5vw, 32px); font-weight: normal;
-      margin-bottom: 12px; color: #F5EDD8;
-      letter-spacing: 0.07em; line-height: 1.25;
+      font-family: 'Playfair Display', serif;
+      font-size: 30px; font-weight: 400;
+      color: var(--ink); margin-bottom: 18px; line-height: 1.2;
     }
-    .gold-line {
-      width: 48px; height: 1px;
-      background: linear-gradient(90deg, transparent, #C9A84C, transparent);
-      margin: 0 auto 16px;
+
+    .ornament {
+      display: flex; align-items: center; gap: 14px;
+      justify-content: center; margin-bottom: 22px;
     }
-    #quote-wrap {
-      min-height: 80px;
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-    #quote-wrap.hidden { opacity: 0; transform: translateY(6px); }
-    #quote-wrap.visible { opacity: 1; transform: translateY(0); }
+    .orn-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--ink-faint)); }
+    .orn-line.r { background: linear-gradient(90deg, var(--ink-faint), transparent); }
+    .orn-sym { color: var(--gold); font-size: 13px; }
+
+    #quote-wrap { min-height: 68px; transition: opacity 0.6s ease, transform 0.6s ease; }
+    #quote-wrap.out { opacity: 0; transform: translateY(5px); }
+    #quote-wrap.in  { opacity: 1; transform: translateY(0); }
+
     #quote-text {
-      font-size: 13px; color: #C4B89A; line-height: 1.8;
-      margin-bottom: 6px; font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 15px;
+      line-height: 1.75; color: var(--ink-mid); margin-bottom: 7px;
     }
     #quote-ref {
-      font-size: 10px; letter-spacing: 0.18em;
-      color: #7A6E58; text-transform: uppercase;
+      font-size: 9px; letter-spacing: 0.32em;
+      text-transform: uppercase; color: var(--ink-faint);
     }
 
-    /* Wheel */
-    #wheel-wrap { position: relative; margin-bottom: 28px; }
-    #pointer {
-      position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
-      width: 0; height: 0;
-      border-left: 11px solid transparent;
-      border-right: 11px solid transparent;
-      border-top: 26px solid #C9A84C;
-      filter: drop-shadow(0 0 10px #C9A84C);
-      z-index: 10;
+    /* Card area */
+    #card-area { width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+    /* Deck */
+    #deck {
+      position: relative; width: 272px; height: 352px;
+      margin-bottom: 26px; cursor: pointer;
+      transition: transform 0.3s ease, opacity 0.3s ease, height 0.3s ease, margin 0.3s ease;
     }
-    #wheel-glow {
-      position: absolute; inset: -30px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(201,168,76,0.18) 0%, transparent 65%);
-      pointer-events: none;
+    #deck.hide { opacity: 0; transform: translateY(-12px); pointer-events: none; height: 0; margin-bottom: 0; overflow: hidden; }
+
+    .dl {
+      position: absolute; width: 272px; height: 352px;
+      border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.22);
     }
-    #wheel {
-      display: block; cursor: pointer;
-      filter: brightness(1) drop-shadow(0 0 12px rgba(0,0,0,0.8));
-      transition: filter 0.4s;
-      touch-action: manipulation;
-    }
-    #wheel.spinning {
-      cursor: default;
-      filter: brightness(1.08) drop-shadow(0 0 24px rgba(201,168,76,0.4));
+    .dl:nth-child(1) { background: var(--card-back-3); transform: rotate(-4.5deg) translate(-7px, 5px); opacity: 0.65; }
+    .dl:nth-child(2) { background: var(--card-back-2); transform: rotate(2.5deg) translate(5px, 3px); opacity: 0.82; }
+    .dl.top {
+      background: var(--card-back);
+      transform: rotate(0);
+      display: flex; align-items: center; justify-content: center;
     }
 
-    /* Spin button */
-    #spin-btn {
-      background: linear-gradient(135deg, #C9A84C 0%, #8A6E2F 100%);
-      border: 1px solid rgba(201,168,76,0.6);
-      color: #06080f;
-      padding: 14px 52px; font-size: 12px;
-      letter-spacing: 0.3em; text-transform: uppercase;
-      cursor: pointer; border-radius: 1px; margin-bottom: 28px;
-      font-family: inherit; font-weight: bold;
-      box-shadow: 0 4px 32px rgba(201,168,76,0.28);
-      transition: all 0.35s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    #spin-btn:disabled {
-      background: transparent;
-      border-color: rgba(201,168,76,0.2);
-      color: #7A6E58; cursor: default; box-shadow: none;
+    .card-back-panel {
+      width: 228px; height: 296px;
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 7px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 18px;
     }
 
-    /* Result card */
-    #result-card {
-      max-width: 440px; width: 100%;
-      background: linear-gradient(135deg, rgba(17,24,40,0.9), rgba(6,8,15,0.95));
-      border: 1px solid rgba(201,168,76,0.5);
-      border-radius: 3px; padding: 26px 28px; margin-bottom: 28px;
-      opacity: 0; transform: translateY(18px) scale(0.97);
-      transition: opacity 0.55s ease, transform 0.55s ease;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 8px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04);
-      display: none;
+    .cross { position: relative; width: 26px; height: 26px; }
+    .cross::before, .cross::after {
+      content: ''; position: absolute;
+      background: rgba(255,255,255,0.45); border-radius: 1px;
     }
-    #result-card.visible {
-      opacity: 1; transform: translateY(0) scale(1);
+    .cross::before { width: 3px; height: 26px; left: 50%; transform: translateX(-50%); }
+    .cross::after  { width: 18px; height: 3px; top: 7px; left: 50%; transform: translateX(-50%); }
+
+    .back-label {
+      font-size: 7px; letter-spacing: 0.45em;
+      text-transform: uppercase; color: rgba(255,255,255,0.28);
     }
-    #result-category {
-      font-size: 9px; letter-spacing: 0.42em; text-transform: uppercase;
-      font-weight: bold; margin-bottom: 14px;
+
+    #deck-count {
+      font-size: 10px; letter-spacing: 0.22em;
+      color: var(--ink-faint); text-transform: uppercase;
+      margin-bottom: 22px; transition: opacity 0.3s, max-height 0.3s;
+      overflow: hidden; max-height: 30px;
     }
-    #result-question {
-      font-size: clamp(15px, 3vw, 18px); line-height: 1.85;
-      color: #F5EDD8; font-style: italic; margin-bottom: 22px;
+    #deck-count.hide { opacity: 0; max-height: 0; margin-bottom: 0; }
+
+    /* Drawn card */
+    #drawn-card {
+      display: none; opacity: 0;
+      width: 272px; height: 352px;
+      perspective: 1400px; margin-bottom: 24px;
+      transition: opacity 0.35s ease;
     }
-    #result-buttons { display: flex; gap: 10px; }
-    #keep-btn {
-      flex: 1; padding: 10px 0; font-size: 11px;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      background: transparent; border: 1px solid rgba(80,160,100,0.6);
-      color: #6DBF85; border-radius: 1px; cursor: pointer;
-      font-family: inherit; font-weight: bold;
-      box-shadow: 0 0 12px rgba(80,160,100,0.15);
-      -webkit-tap-highlight-color: transparent;
+    #drawn-card.show { display: block; }
+    #drawn-card.visible { opacity: 1; }
+
+    #card-inner {
+      width: 100%; height: 100%; position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    #remove-btn {
-      flex: 1; padding: 10px 0; font-size: 11px;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      background: transparent; border: 1px solid rgba(180,60,60,0.5);
-      color: #C06060; border-radius: 1px; cursor: pointer;
-      font-family: inherit; font-weight: bold;
-      -webkit-tap-highlight-color: transparent;
+    #card-inner.flipped { transform: rotateY(180deg); }
+
+    .cf {
+      position: absolute; width: 100%; height: 100%;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: 12px; box-shadow: 0 8px 36px rgba(0,0,0,0.16);
     }
+
+    #cf-back {
+      background: var(--card-back);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    #cf-front {
+      background: var(--card-bg);
+      transform: rotateY(180deg);
+      padding: 34px 28px 28px;
+      display: flex; flex-direction: column;
+      border: 1px solid rgba(180,140,60,0.18);
+      background-image: repeating-linear-gradient(
+        transparent, transparent 27px,
+        rgba(120,80,20,0.055) 27px, rgba(120,80,20,0.055) 28px
+      );
+      overflow: hidden; position: relative;
+    }
+
+    #cf-front::before {
+      content: '❧';
+      position: absolute; top: 12px; right: 16px;
+      font-size: 18px; color: var(--gold); opacity: 0.28;
+    }
+
+    #card-cat {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 8px; letter-spacing: 0.48em;
+      text-transform: uppercase; margin-bottom: 22px;
+    }
+    .cat-pip { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+    #card-q {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 20px;
+      line-height: 1.7; color: var(--ink);
+      flex: 1; display: flex; align-items: center;
+    }
+
+    .card-rule { width: 36px; height: 1px; background: var(--border); margin: 18px 0 12px; }
+    .card-orn  { font-size: 14px; color: var(--gold); opacity: 0.45; }
+
+    /* Action buttons */
+    #action-buttons { display: none; gap: 12px; width: 272px; }
+    #action-buttons.show { display: flex; }
+
+    .act-btn {
+      flex: 1; font-family: 'Raleway', sans-serif; font-weight: 400;
+      font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+      padding: 13px 0; border-radius: 2px; cursor: pointer;
+      transition: all 0.2s; background: transparent;
+    }
+    #keep-btn   { border: 1px solid rgba(50,110,70,0.55); color: #346248; }
+    #remove-btn { border: 1px solid rgba(160,55,35,0.5);  color: #9B3D28; }
+
+    /* Divider */
+    .divider { width: 100%; height: 1px; background: var(--border); margin: 36px 0 28px; }
 
     /* Legend */
-    #legend {
-      display: flex; gap: 18px; flex-wrap: wrap;
-      justify-content: center; margin-bottom: 14px;
-    }
-    .legend-item { display: flex; align-items: center; gap: 7px; }
-    .legend-dot {
-      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
-    }
-    .legend-name { font-size: 11px; color: #C4B89A; letter-spacing: 0.12em; }
-    .legend-count { font-size: 10px; color: #7A6E58; }
+    #legend { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-bottom: 14px; }
+    .li { display: flex; align-items: center; gap: 7px; }
+    .li-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .li-name { font-size: 10px; letter-spacing: 0.1em; color: var(--ink-mid); }
+    .li-count { font-size: 10px; color: var(--ink-faint); }
 
-    /* Restore */
     #restore-btn {
       display: none;
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.08);
-      color: #7A6E58; padding: 8px 24px;
-      font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
-      cursor: pointer; border-radius: 1px; margin-bottom: 22px;
-      font-family: inherit;
-      -webkit-tap-highlight-color: transparent;
+      font-family: 'Raleway', sans-serif; font-size: 9px;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--ink-faint); background: transparent;
+      border: 1px solid var(--border); padding: 9px 22px;
+      cursor: pointer; border-radius: 2px; margin-top: 12px;
     }
 
     /* History */
-    #history { max-width: 440px; width: 100%; margin-top: 8px; }
+    #history { width: 100%; margin-top: 26px; }
     #history-label {
-      font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
-      color: #7A6E58; margin-bottom: 10px; text-align: center;
+      font-size: 9px; letter-spacing: 0.38em; text-transform: uppercase;
+      color: var(--ink-faint); text-align: center; margin-bottom: 16px;
     }
-    .history-item {
-      padding: 11px 16px; margin-bottom: 6px;
-      background: rgba(255,255,255,0.015);
-      border-radius: 2px; font-size: 12px; color: #C4B89A;
-      font-style: italic; line-height: 1.65;
+    .hi {
+      padding: 13px 16px; margin-bottom: 8px;
+      border-left: 2px solid rgba(120,80,20,0.15);
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic; font-size: 14px;
+      color: var(--ink-mid); line-height: 1.6;
     }
-    .history-cat {
-      font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase;
-      font-style: normal; margin-right: 8px; opacity: 0.8;
+    .hi-cat {
+      font-family: 'Raleway', sans-serif; font-style: normal;
+      font-size: 8px; letter-spacing: 0.3em; text-transform: uppercase;
+      margin-right: 8px; opacity: 0.65;
     }
   </style>
 </head>
 <body>
-<div id="dot-grid"></div>
-<canvas id="lights-canvas"></canvas>
-
 <div id="app">
+
   <div id="header">
-    <div id="eyebrow">Growing Together</div>
-    <h1>The Connection Wheel</h1>
-    <div class="gold-line"></div>
-    <div id="quote-wrap" class="visible">
+    <div class="eyebrow">A weekly practice</div>
+    <h1>Growing Together</h1>
+    <div class="ornament">
+      <div class="orn-line"></div>
+      <span class="orn-sym">✦</span>
+      <div class="orn-line r"></div>
+    </div>
+    <div id="quote-wrap" class="in">
       <p id="quote-text"></p>
-      <span id="quote-ref"></span>
+      <div style="margin-top:7px"><span id="quote-ref"></span></div>
     </div>
   </div>
 
-  <div id="wheel-wrap">
-    <div id="pointer"></div>
-    <div id="wheel-glow"></div>
-    <canvas id="wheel" width="340" height="340"></canvas>
-  </div>
+  <div id="card-area">
+    <div id="deck">
+      <div class="dl"></div>
+      <div class="dl"></div>
+      <div class="dl top">
+        <div class="card-back-panel">
+          <div class="cross"></div>
+          <div class="back-label">Draw a question</div>
+        </div>
+      </div>
+    </div>
+    <span id="deck-count"></span>
 
-  <button id="spin-btn">Spin the Wheel</button>
+    <div id="drawn-card">
+      <div id="card-inner">
+        <div class="cf" id="cf-back">
+          <div class="card-back-panel"><div class="cross"></div></div>
+        </div>
+        <div class="cf" id="cf-front">
+          <div id="card-cat">
+            <span class="cat-pip" id="cat-pip"></span>
+            <span id="cat-label"></span>
+          </div>
+          <p id="card-q"></p>
+          <div class="card-rule"></div>
+          <div class="card-orn">✦</div>
+        </div>
+      </div>
+    </div>
 
-  <div id="result-card">
-    <div id="result-category"></div>
-    <p id="result-question"></p>
-    <div id="result-buttons">
-      <button id="keep-btn">Keep</button>
-      <button id="remove-btn">Remove</button>
+    <div id="action-buttons">
+      <button class="act-btn" id="keep-btn">Keep</button>
+      <button class="act-btn" id="remove-btn">Remove</button>
     </div>
   </div>
 
+  <div class="divider"></div>
   <div id="legend"></div>
   <button id="restore-btn">Restore All Questions</button>
   <div id="history"></div>
 </div>
 
 <script>
-const THEME = {
-  bg0: "#06080f", bg1: "#0b0e1a",
-  gold: "#C9A84C", goldDim: "#8A6E2F",
-  text: "#F5EDD8", textDim: "#C4B89A", textFaint: "#7A6E58"
-};
-
 const QUOTES = [
   { text: "Two are better than one... if either of them falls, one can help the other up.", ref: "Ecclesiastes 4:9–10" },
   { text: "Trust in the Lord with all your heart and lean not on your own understanding.", ref: "Proverbs 3:5" },
@@ -250,375 +329,231 @@ const QUOTES = [
 ];
 
 const ALL_QUESTIONS = [
-  { question: "What moment first made your faith feel real to you?", category: "Faith", color: "#C9A84C" },
-  { question: "How do you feel closest to God — worship, prayer, nature, or community?", category: "Faith", color: "#C9A84C" },
-  { question: "How has your relationship with God changed in the last year?", category: "Faith", color: "#C9A84C" },
-  { question: "What's a time God showed up in a way you didn't expect?", category: "Faith", color: "#C9A84C" },
-  { question: "What does worship mean to you beyond just singing?", category: "Faith", color: "#C9A84C" },
-  { question: "If you could ask God one question face to face, what would it be?", category: "Faith", color: "#C9A84C" },
-  { question: "What does the Holy Spirit feel like to you when you sense Him?", category: "Faith", color: "#C9A84C" },
-  { question: "What's a sin you've had to genuinely repent of and felt changed by?", category: "Faith", color: "#C9A84C" },
-  { question: "What's a fear you've never really said out loud to anyone?", category: "Personal", color: "#5E9E91" },
-  { question: "What's something you're genuinely proud of that others might not know?", category: "Personal", color: "#5E9E91" },
-  { question: "What does loneliness feel like for you — and what does it actually take for someone to break through that?", category: "Personal", color: "#5E9E91" },
-  { question: "What are you most uncertain about in your life right now?", category: "Personal", color: "#5E9E91" },
-  { question: "What's a part of yourself you find hardest to accept — and is it something you've ever let someone else fully see?", category: "Personal", color: "#5E9E91" },
-  { question: "What do you most want someone to understand about who you are?", category: "Personal", color: "#5E9E91" },
-  { question: "What's something small someone did that made you feel deeply cared for that they probably didn't even realize?", category: "Personal", color: "#5E9E91" },
-  { question: "How do you know when you need space vs. when you need someone to stay — and have you ever asked for the wrong one?", category: "Personal", color: "#5E9E91" },
-  { question: "What do you need from someone when you're going through something hard that most people get wrong when they try to help you?", category: "Personal", color: "#5E9E91" },
-  { question: "What's a line you would never cross, no matter what?", category: "Values", color: "#7A86C0" },
-  { question: "What do you believe God is calling you toward right now?", category: "Values", color: "#7A86C0" },
-  { question: "What's something the world values that you're learning not to?", category: "Values", color: "#7A86C0" },
-  { question: "What do you want people to say about you at the end of your life?", category: "Values", color: "#7A86C0" },
-  { question: "What's a conviction you hold that most people around you don't share?", category: "Values", color: "#7A86C0" },
-  { question: "How do you want to handle conflict in a relationship?", category: "Values", color: "#7A86C0" },
-  { question: "What's something you want to build or create in your lifetime?", category: "Values", color: "#7A86C0" },
-  { question: "What's your favourite memory from childhood?", category: "Light", color: "#C47E72" },
-  { question: "What's something you're secretly really good at?", category: "Light", color: "#C47E72" },
-  { question: "What does your perfect day look like from start to finish?", category: "Light", color: "#C47E72" },
-  { question: "What's something you've always wanted to try but haven't yet?", category: "Light", color: "#C47E72" },
-  { question: "What's the most spontaneous thing you've ever done?", category: "Light", color: "#C47E72" },
-  { question: "What's a movie, show, or book that genuinely changed how you see the world?", category: "Light", color: "#C47E72" },
-  { question: "If you could have dinner with anyone — living, dead, or fictional — who?", category: "Light", color: "#C47E72" },
-  { question: "What's something small you do that brings you joy that nobody knows about?", category: "Light", color: "#C47E72" },
-  { question: "What's your go-to comfort meal when you've had a rough day?", category: "Light", color: "#C47E72" },
-  { question: "What's the best gift you've ever received and why did it mean so much?", category: "Light", color: "#C47E72" },
+  { question: "What moment first made your faith feel real to you?", category: "Faith", color: "#8B6F3A" },
+  { question: "How do you feel closest to God — worship, prayer, nature, or community?", category: "Faith", color: "#8B6F3A" },
+  { question: "How has your relationship with God changed in the last year?", category: "Faith", color: "#8B6F3A" },
+  { question: "What's a time God showed up in a way you didn't expect?", category: "Faith", color: "#8B6F3A" },
+  { question: "What does worship mean to you beyond just singing?", category: "Faith", color: "#8B6F3A" },
+  { question: "If you could ask God one question face to face, what would it be?", category: "Faith", color: "#8B6F3A" },
+  { question: "What does the Holy Spirit feel like to you when you sense Him?", category: "Faith", color: "#8B6F3A" },
+  { question: "What's a sin you've had to genuinely repent of and felt changed by?", category: "Faith", color: "#8B6F3A" },
+  { question: "If you knew that in one year you would die suddenly, would you change anything about the way you are now living? Why?", category: "Faith", color: "#8B6F3A" },
+
+  { question: "What's a fear you've never really said out loud to anyone?", category: "Personal", color: "#3D6B50" },
+  { question: "What's something you're genuinely proud of that others might not know?", category: "Personal", color: "#3D6B50" },
+  { question: "What does loneliness feel like for you — and what does it actually take for someone to break through that?", category: "Personal", color: "#3D6B50" },
+  { question: "What are you most uncertain about in your life right now?", category: "Personal", color: "#3D6B50" },
+  { question: "What's a part of yourself you find hardest to accept — and is it something you've ever let someone else fully see?", category: "Personal", color: "#3D6B50" },
+  { question: "What do you most want someone to understand about who you are?", category: "Personal", color: "#3D6B50" },
+  { question: "What's something small someone did that made you feel deeply cared for that they probably didn't even realize?", category: "Personal", color: "#3D6B50" },
+  { question: "How do you know when you need space vs. when you need someone to stay — and have you ever asked for the wrong one?", category: "Personal", color: "#3D6B50" },
+  { question: "What do you need from someone when you're going through something hard that most people get wrong when they try to help you?", category: "Personal", color: "#3D6B50" },
+  { question: "For what in your life do you feel most grateful?", category: "Personal", color: "#3D6B50" },
+  { question: "If you could wake up tomorrow having gained any one quality or ability, what would it be?", category: "Personal", color: "#3D6B50" },
+  { question: "What roles do love and affection play in your life?", category: "Personal", color: "#3D6B50" },
+  { question: "How close and warm is your family? Do you feel your childhood was happier than most other people's?", category: "Personal", color: "#3D6B50" },
+  { question: "How do you feel about your relationship with your mother?", category: "Personal", color: "#3D6B50" },
+  { question: "When did you last cry in front of another person? By yourself?", category: "Personal", color: "#3D6B50" },
+  { question: "If you were to die this evening with no opportunity to communicate with anyone, what would you most regret not having told someone? Why haven't you told them yet?", category: "Personal", color: "#3D6B50" },
+  { question: "Share a personal problem and ask your partner how they might handle it — then ask them to reflect back how you seem to be feeling about it.", category: "Personal", color: "#3D6B50" },
+
+  { question: "What's a line you would never cross, no matter what?", category: "Values", color: "#8A4A32" },
+  { question: "What do you believe God is calling you toward right now?", category: "Values", color: "#8A4A32" },
+  { question: "What's something the world values that you're learning not to?", category: "Values", color: "#8A4A32" },
+  { question: "What do you want people to say about you at the end of your life?", category: "Values", color: "#8A4A32" },
+  { question: "What's a conviction you hold that most people around you don't share?", category: "Values", color: "#8A4A32" },
+  { question: "How do you want to handle conflict in a relationship?", category: "Values", color: "#8A4A32" },
+  { question: "What's something you want to build or create in your lifetime?", category: "Values", color: "#8A4A32" },
+  { question: "What do you value most in a friendship?", category: "Values", color: "#8A4A32" },
+  { question: "Is there something you've dreamed of doing for a long time? Why haven't you done it?", category: "Values", color: "#8A4A32" },
+  { question: "If you were going to become a close friend with your partner, what would be important for them to know about you?", category: "Values", color: "#8A4A32" },
+
+  { question: "What's your favourite memory from childhood?", category: "Light", color: "#7A5E2A" },
+  { question: "What's something you're secretly really good at?", category: "Light", color: "#7A5E2A" },
+  { question: "What does your perfect day look like from start to finish?", category: "Light", color: "#7A5E2A" },
+  { question: "What's something you've always wanted to try but haven't yet?", category: "Light", color: "#7A5E2A" },
+  { question: "What's the most spontaneous thing you've ever done?", category: "Light", color: "#7A5E2A" },
+  { question: "What's a movie, show, or book that genuinely changed how you see the world?", category: "Light", color: "#7A5E2A" },
+  { question: "If you could have dinner with anyone — living, dead, or fictional — who?", category: "Light", color: "#7A5E2A" },
+  { question: "What's something small you do that brings you joy that nobody knows about?", category: "Light", color: "#7A5E2A" },
+  { question: "What's your go-to comfort meal when you've had a rough day?", category: "Light", color: "#7A5E2A" },
+  { question: "What's the best gift you've ever received and why did it mean so much?", category: "Light", color: "#7A5E2A" },
+  { question: "Take four minutes and tell your partner your life story in as much detail as possible.", category: "Light", color: "#7A5E2A" },
+  { question: "Share an embarrassing moment in your life.", category: "Light", color: "#7A5E2A" },
+  { question: "Tell your partner what you like about them — be honest, saying things you might not normally say to someone you've just met.", category: "Light", color: "#7A5E2A" },
 ];
 
-const CATEGORY_COLORS = { Faith: "#C9A84C", Personal: "#5E9E91", Values: "#7A86C0", Light: "#C47E72" };
+const CAT_COLORS = { Faith: "#8B6F3A", Personal: "#3D6B50", Values: "#8A4A32", Light: "#7A5E2A" };
 
-function hexToRgb(hex) {
-  const n = parseInt(hex.slice(1), 16);
-  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-}
-function lighten(hex, amt) {
-  const [r,g,b] = hexToRgb(hex);
-  return `rgb(${Math.min(255,r+amt)},${Math.min(255,g+amt)},${Math.min(255,b+amt)})`;
-}
-function alphaCol(hex, a) {
-  const [r,g,b] = hexToRgb(hex);
-  return `rgba(${r},${g},${b},${a})`;
-}
+let segments = [];
+let currentQ = null;
+let currentQIndex = null;
+let historyList = [];
 
-function shuffle(questions) {
+function loadRemoved() {
+  try { return JSON.parse(localStorage.getItem("gt-removed") || "[]"); } catch(_) { return []; }
+}
+function saveRemoved() {
+  try {
+    const removed = ALL_QUESTIONS.filter(q => !segments.some(s => s.question === q.question)).map(q => q.question);
+    localStorage.setItem("gt-removed", JSON.stringify(removed));
+  } catch(_) {}
+}
+function clearRemoved() { try { localStorage.removeItem("gt-removed"); } catch(_) {} }
+
+function shuffle(qs) {
   const pools = {};
-  questions.forEach(q => { if (!pools[q.category]) pools[q.category] = []; pools[q.category].push({...q}); });
+  qs.forEach(q => { if (!pools[q.category]) pools[q.category] = []; pools[q.category].push({...q}); });
   const keys = Object.keys(pools);
-  const result = []; let safety = 0;
-  while (keys.some(k => pools[k] && pools[k].length > 0) && safety < 1000) {
-    safety++;
-    const available = keys.filter(k => pools[k] && pools[k].length > 0);
-    const last = result.length > 0 ? result[result.length - 1].category : null;
-    const preferred = available.filter(k => k !== last);
-    const pool = preferred.length > 0 ? preferred : available;
+  const result = []; let s = 0;
+  while (keys.some(k => pools[k]?.length > 0) && s++ < 2000) {
+    const avail = keys.filter(k => pools[k]?.length > 0);
+    const last = result.length ? result[result.length - 1].category : null;
+    const pref = avail.filter(k => k !== last);
+    const pool = pref.length ? pref : avail;
     const pick = pool[Math.floor(Math.random() * pool.length)];
     const arr = pools[pick];
-    const idx = Math.floor(Math.random() * arr.length);
-    result.push(arr.splice(idx, 1)[0]);
+    result.push(arr.splice(Math.floor(Math.random() * arr.length), 1)[0]);
   }
   return result;
 }
 
-function drawWheel(canvas, rotation, segments) {
-  if (!canvas || segments.length === 0) return;
-  const ctx = canvas.getContext("2d");
-  const W = canvas.width, H = canvas.height;
-  const cx = W/2, cy = H/2;
-  const R = Math.min(W,H)/2 - 10;
-  const arc = (2*Math.PI) / segments.length;
-  ctx.clearRect(0,0,W,H);
-
-  ctx.save();
-  ctx.shadowColor = "rgba(0,0,0,0.7)"; ctx.shadowBlur = 36;
-  ctx.beginPath(); ctx.arc(cx,cy,R+6,0,2*Math.PI);
-  ctx.fillStyle = THEME.bg0; ctx.fill();
-  ctx.restore();
-
-  ctx.beginPath(); ctx.arc(cx,cy,R+2,0,2*Math.PI);
-  ctx.strokeStyle = alphaCol(THEME.gold,0.3); ctx.lineWidth = 1.5; ctx.stroke();
-
-  segments.forEach((seg,i) => {
-    const start = rotation + i*arc - Math.PI/2;
-    const end = start + arc;
-    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,R,start,end); ctx.closePath();
-    const grad = ctx.createRadialGradient(cx,cy,R*0.15,cx,cy,R);
-    grad.addColorStop(0, lighten(THEME.bg1, 8));
-    grad.addColorStop(0.5, alphaCol(seg.color, 0.22));
-    grad.addColorStop(1, alphaCol(seg.color, 0.45));
-    ctx.fillStyle = grad; ctx.fill();
-    ctx.strokeStyle = alphaCol(THEME.gold, 0.12); ctx.lineWidth = 0.8; ctx.stroke();
-    ctx.beginPath(); ctx.arc(cx,cy,R-2,start+0.015,end-0.015);
-    ctx.strokeStyle = alphaCol(seg.color,0.55); ctx.lineWidth = 3; ctx.stroke();
-  });
-
-  ctx.beginPath(); ctx.arc(cx,cy,R*0.26,0,2*Math.PI);
-  ctx.strokeStyle = alphaCol(THEME.gold,0.25); ctx.lineWidth = 1; ctx.stroke();
-
-  const ig = ctx.createRadialGradient(cx,cy,0,cx,cy,R*0.25);
-  ig.addColorStop(0,"#141828"); ig.addColorStop(1,THEME.bg0);
-  ctx.beginPath(); ctx.arc(cx,cy,R*0.25,0,2*Math.PI);
-  ctx.fillStyle = ig; ctx.fill();
-  ctx.beginPath(); ctx.arc(cx,cy,R*0.25,0,2*Math.PI);
-  ctx.strokeStyle = alphaCol(THEME.gold,0.5); ctx.lineWidth = 1.5; ctx.stroke();
-
-  const armLen = R*0.18, armW = R*0.022;
-  ctx.save();
-  ctx.shadowColor = THEME.gold; ctx.shadowBlur = 8;
-  ctx.fillStyle = THEME.gold;
-  ctx.beginPath(); ctx.rect(cx-armW, cy-armLen, armW*2, armLen*2); ctx.fill();
-  ctx.beginPath(); ctx.rect(cx-armLen*0.62, cy-armLen*0.32, armLen*1.24, armW*2); ctx.fill();
-  ctx.restore();
-}
-
-// ── Lights ────────────────────────────────────────────────────────────────────
-const lightsCanvas = document.getElementById("lights-canvas");
-const lctx = lightsCanvas.getContext("2d");
-const palette = [THEME.gold,"#C9A84C","#B8923F","#5E9E91","#7A86C0","#C47E72","#EDE3C8","#8A7F68"];
-const LIGHTS = Array.from({length:50},(_,i)=>({
-  x: Math.random()*100, y: Math.random()*100,
-  size: 1.2+Math.random()*4.5,
-  baseOpacity: 0.05+Math.random()*0.22,
-  color: palette[Math.floor(Math.random()*palette.length)],
-  speed: 0.004+Math.random()*0.011,
-  phase: Math.random()*Math.PI*2,
-  driftX: (Math.random()-0.5)*0.01,
-  driftY: (Math.random()-0.5)*0.005,
-}));
-
-function resizeLights() {
-  lightsCanvas.width = window.innerWidth;
-  lightsCanvas.height = window.innerHeight;
-}
-resizeLights();
-window.addEventListener("resize", resizeLights);
-
-let tick = 0;
-function animateLights() {
-  tick++;
-  lctx.clearRect(0,0,lightsCanvas.width,lightsCanvas.height);
-  LIGHTS.forEach(l => {
-    const t = tick*l.speed;
-    const y = (((l.y + Math.sin(t+l.phase)*6 + tick*l.driftY)%100)+100)%100;
-    const x = (((l.x + Math.cos(t*0.65+l.phase)*5 + tick*l.driftX)%100)+100)%100;
-    const pulse = l.baseOpacity*(0.45+0.55*Math.sin(t*1.6+l.phase));
-    const px = x/100*lightsCanvas.width, py = y/100*lightsCanvas.height;
-    const [r,g,b] = hexToRgb(l.color);
-    lctx.save();
-    lctx.globalAlpha = pulse;
-    const grad = lctx.createRadialGradient(px,py,0,px,py,l.size*3);
-    grad.addColorStop(0,`rgba(${r},${g},${b},1)`);
-    grad.addColorStop(1,`rgba(${r},${g},${b},0)`);
-    lctx.fillStyle = grad;
-    lctx.beginPath(); lctx.arc(px,py,l.size*3,0,2*Math.PI); lctx.fill();
-    lctx.restore();
-  });
-  requestAnimationFrame(animateLights);
-}
-animateLights();
-
-// ── State ─────────────────────────────────────────────────────────────────────
-let segments = [];
-let spinning = false;
-let currentResult = null;
-let currentIdx = null;
-let rotRef = 0;
-let animRef = null;
-let historyItems = [];
-
-// ── Storage ───────────────────────────────────────────────────────────────────
-function loadRemoved() {
-  try {
-    const raw = localStorage.getItem("connection-wheel-removed");
-    return raw ? JSON.parse(raw) : [];
-  } catch(_) { return []; }
-}
-function saveRemoved(segs) {
-  try {
-    const removed = ALL_QUESTIONS
-      .filter(q => !segs.some(s => s.question === q.question))
-      .map(q => q.question);
-    localStorage.setItem("connection-wheel-removed", JSON.stringify(removed));
-  } catch(_) {}
-}
-function clearRemoved() {
-  try { localStorage.removeItem("connection-wheel-removed"); } catch(_) {}
-}
-
-// ── Init ──────────────────────────────────────────────────────────────────────
 function init() {
   const removed = loadRemoved();
-  const active = ALL_QUESTIONS.filter(q => !removed.includes(q.question));
-  segments = shuffle(active);
-  renderAll();
+  segments = shuffle(ALL_QUESTIONS.filter(q => !removed.includes(q.question)));
+  renderLegend(); updateDeckCount(); updateRestoreBtn();
 }
 
-// ── Wheel canvas ──────────────────────────────────────────────────────────────
-const wheelCanvas = document.getElementById("wheel");
-
-function resizeWheel() {
-  const size = Math.min(window.innerWidth - 40, 370);
-  wheelCanvas.width = size; wheelCanvas.height = size;
-  drawWheel(wheelCanvas, rotRef, segments);
-}
-resizeWheel();
-window.addEventListener("resize", resizeWheel);
-
-// ── Quotes ────────────────────────────────────────────────────────────────────
-let quoteIndex = 0;
-const quoteText = document.getElementById("quote-text");
-const quoteRef = document.getElementById("quote-ref");
-const quoteWrap = document.getElementById("quote-wrap");
+// Quotes
+let quoteIdx = 0;
+const qWrap = document.getElementById("quote-wrap");
+const qText = document.getElementById("quote-text");
+const qRef  = document.getElementById("quote-ref");
 
 function showQuote() {
-  quoteText.textContent = `"${QUOTES[quoteIndex].text}"`;
-  quoteRef.textContent = QUOTES[quoteIndex].ref;
+  qText.textContent = `"${QUOTES[quoteIdx].text}"`;
+  qRef.textContent  = QUOTES[quoteIdx].ref;
 }
 showQuote();
-
 setInterval(() => {
-  quoteWrap.className = "hidden";
-  setTimeout(() => {
-    quoteIndex = (quoteIndex + 1) % QUOTES.length;
-    showQuote();
-    quoteWrap.className = "visible";
-  }, 600);
+  qWrap.className = "out";
+  setTimeout(() => { quoteIdx = (quoteIdx + 1) % QUOTES.length; showQuote(); qWrap.className = "in"; }, 650);
 }, 15000);
 
-// ── Spin ──────────────────────────────────────────────────────────────────────
-const spinBtn = document.getElementById("spin-btn");
-const resultCard = document.getElementById("result-card");
-const resultCategory = document.getElementById("result-category");
-const resultQuestion = document.getElementById("result-question");
+// Elements
+const deck       = document.getElementById("deck");
+const deckCount  = document.getElementById("deck-count");
+const drawnCard  = document.getElementById("drawn-card");
+const cardInner  = document.getElementById("card-inner");
+const cardQ      = document.getElementById("card-q");
+const catPip     = document.getElementById("cat-pip");
+const catLabel   = document.getElementById("cat-label");
+const actionBtns = document.getElementById("action-buttons");
+const restoreBtn = document.getElementById("restore-btn");
 
-function spin() {
-  if (spinning || segments.length === 0) return;
-  hideResult();
-  spinning = true;
-  wheelCanvas.classList.add("spinning");
-  spinBtn.disabled = true;
-
-  const totalSpin = 8*Math.PI + Math.random()*8*Math.PI;
-  const duration = 4200 + Math.random()*1800;
-  const start = performance.now();
-  const startRot = rotRef;
-  const snap = [...segments];
-  const arc = (2*Math.PI)/snap.length;
-
-  function animate(now) {
-    const elapsed = now - start;
-    const progress = Math.min(elapsed/duration, 1);
-    const ease = 1 - Math.pow(1-progress, 4);
-    const current = startRot + totalSpin*ease;
-    rotRef = current;
-    drawWheel(wheelCanvas, current, snap);
-    if (progress < 1) {
-      animRef = requestAnimationFrame(animate);
-    } else {
-      spinning = false;
-      wheelCanvas.classList.remove("spinning");
-      spinBtn.disabled = false;
-      const normalized = (2*Math.PI - ((current%(2*Math.PI))+2*Math.PI)%(2*Math.PI))%(2*Math.PI);
-      const idx = Math.floor(normalized/arc) % snap.length;
-      currentResult = snap[idx];
-      currentIdx = segments.findIndex(s => s.question === currentResult.question);
-      showResult(currentResult);
-      addHistory(currentResult);
-    }
-  }
-  animRef = requestAnimationFrame(animate);
+function updateDeckCount() {
+  deckCount.textContent = segments.length === 0
+    ? "No questions remaining"
+    : `${segments.length} question${segments.length === 1 ? "" : "s"} remaining`;
 }
 
-spinBtn.addEventListener("click", spin);
-wheelCanvas.addEventListener("click", spin);
+// Draw
+deck.addEventListener("click", draw);
 
-// ── Result ────────────────────────────────────────────────────────────────────
-function showResult(res) {
-  resultCategory.textContent = res.category;
-  resultCategory.style.color = res.color;
-  resultQuestion.textContent = `"${res.question}"`;
-  resultCard.style.display = "block";
-  setTimeout(() => resultCard.classList.add("visible"), 20);
+function draw() {
+  if (segments.length === 0) return;
+  const idx = Math.floor(Math.random() * segments.length);
+  currentQ = segments[idx];
+  currentQIndex = idx;
+
+  cardQ.textContent = `"${currentQ.question}"`;
+  catPip.style.background = currentQ.color;
+  catLabel.style.color = currentQ.color;
+  catLabel.textContent = currentQ.category;
+
+  deck.classList.add("hide");
+  deckCount.classList.add("hide");
+
+  setTimeout(() => {
+    drawnCard.classList.add("show");
+    requestAnimationFrame(() => {
+      drawnCard.classList.add("visible");
+      setTimeout(() => {
+        cardInner.classList.add("flipped");
+        setTimeout(() => { actionBtns.classList.add("show"); }, 700);
+      }, 150);
+    });
+  }, 250);
 }
 
-function hideResult() {
-  resultCard.classList.remove("visible");
-  setTimeout(() => { resultCard.style.display = "none"; }, 300);
-  currentResult = null; currentIdx = null;
-}
-
-document.getElementById("keep-btn").addEventListener("click", hideResult);
-
-document.getElementById("remove-btn").addEventListener("click", () => {
-  if (currentIdx === null) return;
-  segments = segments.filter((_,i) => i !== currentIdx);
-  saveRemoved(segments);
-  drawWheel(wheelCanvas, rotRef, segments);
-  renderLegend();
-  updateRestoreBtn();
-  hideResult();
-  if (segments.length === 0) spinBtn.textContent = "No Questions Left";
+document.getElementById("keep-btn").addEventListener("click", () => {
+  addHistory(currentQ);
+  returnCard();
 });
 
-// ── Restore ───────────────────────────────────────────────────────────────────
-const restoreBtn = document.getElementById("restore-btn");
+document.getElementById("remove-btn").addEventListener("click", () => {
+  if (currentQIndex === null) return;
+  addHistory(currentQ);
+  segments.splice(currentQIndex, 1);
+  saveRemoved(); renderLegend(); updateRestoreBtn();
+  returnCard();
+});
+
+function returnCard() {
+  actionBtns.classList.remove("show");
+  setTimeout(() => { cardInner.classList.remove("flipped"); }, 80);
+  setTimeout(() => { drawnCard.classList.remove("visible"); }, 600);
+  setTimeout(() => {
+    drawnCard.classList.remove("show");
+    currentQ = null; currentQIndex = null;
+    updateDeckCount();
+    deck.classList.remove("hide");
+    deckCount.classList.remove("hide");
+    if (segments.length === 0) deck.style.pointerEvents = "none";
+  }, 950);
+}
+
 restoreBtn.addEventListener("click", () => {
   clearRemoved();
   segments = shuffle(ALL_QUESTIONS);
-  drawWheel(wheelCanvas, rotRef, segments);
-  renderLegend();
-  updateRestoreBtn();
-  spinBtn.textContent = "Spin the Wheel";
-  spinBtn.disabled = false;
-  hideResult();
+  historyList = [];
+  renderHistory();
+  deck.style.pointerEvents = "";
+  renderLegend(); updateDeckCount(); updateRestoreBtn();
 });
 
 function updateRestoreBtn() {
   restoreBtn.style.display = segments.length < ALL_QUESTIONS.length ? "block" : "none";
 }
 
-// ── Legend ────────────────────────────────────────────────────────────────────
 const legendEl = document.getElementById("legend");
 function renderLegend() {
   legendEl.innerHTML = "";
-  Object.entries(CATEGORY_COLORS).forEach(([cat, color]) => {
-    const remaining = segments.filter(s => s.category === cat).length;
-    const item = document.createElement("div");
-    item.className = "legend-item";
-    item.innerHTML = `
-      <div class="legend-dot" style="background:${color};box-shadow:0 0 7px ${color};opacity:${remaining===0?0.3:1}"></div>
-      <span class="legend-name" style="color:${remaining===0?THEME.textFaint:THEME.textDim}">${cat}</span>
-      <span class="legend-count">(${remaining})</span>
-    `;
-    legendEl.appendChild(item);
+  Object.entries(CAT_COLORS).forEach(([cat, color]) => {
+    const rem = segments.filter(s => s.category === cat).length;
+    const el = document.createElement("div");
+    el.className = "li";
+    el.innerHTML = `
+      <div class="li-dot" style="background:${color};opacity:${rem===0?0.3:1}"></div>
+      <span class="li-name" style="opacity:${rem===0?0.45:1}">${cat}</span>
+      <span class="li-count">(${rem})</span>`;
+    legendEl.appendChild(el);
   });
 }
 
-// ── History ───────────────────────────────────────────────────────────────────
 const historyEl = document.getElementById("history");
 function addHistory(item) {
-  historyItems.unshift(item);
-  if (historyItems.length > 6) historyItems.pop();
+  historyList.unshift(item);
+  if (historyList.length > 6) historyList.pop();
   renderHistory();
 }
 function renderHistory() {
-  const visible = historyItems.slice(1);
-  if (visible.length === 0) { historyEl.innerHTML = ""; return; }
-  historyEl.innerHTML = `<div id="history-label">Previous Questions</div>` +
-    visible.map(h => `
-      <div class="history-item" style="border:1px solid ${alphaCol(h.color,0.2)}">
-        <span class="history-cat" style="color:${h.color}">${h.category}</span>
-        "${h.question}"
-      </div>
-    `).join("");
-}
-
-// ── Render all ────────────────────────────────────────────────────────────────
-function renderAll() {
-  drawWheel(wheelCanvas, rotRef, segments);
-  renderLegend();
-  updateRestoreBtn();
-  spinBtn.textContent = segments.length === 0 ? "No Questions Left" : "Spin the Wheel";
+  const visible = historyList.slice(1);
+  if (!visible.length) { historyEl.innerHTML = ""; return; }
+  historyEl.innerHTML = `<div id="history-label">Past Questions</div>` +
+    visible.map(h => `<div class="hi" style="border-left-color:${h.color}55">
+      <span class="hi-cat" style="color:${h.color}">${h.category}</span>${h.question}
+    </div>`).join("");
 }
 
 init();
