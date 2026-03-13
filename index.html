@@ -57,7 +57,7 @@ h1{
 .orn-line.r{background:linear-gradient(90deg,rgba(201,150,58,.4),transparent)}
 
 /* ── Quote ── */
-#quote-wrap{min-height:88px;transition:opacity .65s ease,transform .65s ease}
+#quote-wrap{min-height:88px;transition:opacity .7s ease,transform .7s ease}
 #quote-wrap.out{opacity:0;transform:translateY(7px)}
 #quote-wrap.in{opacity:1;transform:translateY(0)}
 #quote-text{font-family:'EB Garamond',serif;font-style:italic;font-size:15.5px;line-height:1.82;color:rgba(240,232,213,.75);margin-bottom:9px}
@@ -519,9 +519,17 @@ const qText=document.getElementById("quote-text");
 const qRef=document.getElementById("quote-ref");
 function showQ(){qText.textContent=`"${QUOTES[qi].text}"`;qRef.textContent=QUOTES[qi].ref;}
 showQ();
+// Clear the entrance animation after it finishes so opacity transitions work freely
+setTimeout(()=>{ qWrap.style.animation='none'; }, 1500);
 setInterval(()=>{
-  qWrap.classList.replace("in","out");
-  setTimeout(()=>{qi=(qi+1)%QUOTES.length;showQ();qWrap.classList.replace("out","in");},660);
+  qWrap.style.opacity='0';
+  qWrap.style.transform='translateY(7px)';
+  setTimeout(()=>{
+    qi=(qi+1)%QUOTES.length;
+    showQ();
+    qWrap.style.opacity='1';
+    qWrap.style.transform='translateY(0)';
+  },700);
 },15000);
 
 /* ══════════════════ DOM REFS ══════════════════ */
